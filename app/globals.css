@@ -73,6 +73,26 @@ html.lenis body {
 }
 
 
+
+html, body {
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.museum-room,
+.glass-panel,
+.shutdown-footer,
+.project-card,
+.timeline-film-card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.museum-room {
+  will-change: transform, opacity;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -459,7 +479,7 @@ html[data-theme="light"] .hero-drawable-stroke {
   position: relative;
   overflow: hidden;
   transform: translateY(0);
-  transition: transform 180ms cubic-bezier(.16,1,.3,1), box-shadow 180ms ease, background 220ms ease, border-color 220ms ease, opacity 220ms ease;
+  transition: transform 240ms cubic-bezier(.16,1,.3,1), box-shadow 240ms ease, background 280ms ease, border-color 280ms ease, opacity 260ms ease;
 }
 
 .mechanical-button::after {
@@ -1149,5 +1169,31 @@ html[data-theme="light"] .artifact-label {
   .museum-grid {
     background-size: 34px 34px;
   }
+}
+
+
+.shutdown-crt {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(215,255,88,.14), transparent 0.5%, transparent 26%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 1px, transparent 1px, transparent 4px);
+  opacity: 0.32;
+  animation: shutdown-crt-pulse 2.4s ease-in-out infinite;
+}
+
+.shutdown-crt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, transparent 48%, rgba(0,0,0,.88) 74%, #000 100%);
+}
+
+.shutdown-power-line {
+  transform-origin: center;
+}
+
+@keyframes shutdown-crt-pulse {
+  0%, 100% { opacity: .22; transform: scaleY(1); }
+  45% { opacity: .42; transform: scaleY(.985); }
+  75% { opacity: .16; transform: scaleY(.22); }
 }
 

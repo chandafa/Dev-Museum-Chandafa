@@ -1,11 +1,7 @@
 "use client";
 
 import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ReactNode, useEffect } from "react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function SmoothProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -13,39 +9,36 @@ export function SmoothProvider({ children }: { children: ReactNode }) {
     const isTouchFirst = window.matchMedia("(pointer: coarse)").matches;
 
     if (prefersReducedMotion) {
-      ScrollTrigger.refresh();
       return;
     }
 
     const lenis = new Lenis({
-      duration: isTouchFirst ? 1.0 : 1.18,
+      lerp: isTouchFirst ? 0.105 : 0.072,
       smoothWheel: true,
       syncTouch: true,
-      syncTouchLerp: 0.12,
-      touchInertiaMultiplier: 1.06,
-      wheelMultiplier: isTouchFirst ? 0.98 : 0.92,
-      touchMultiplier: 1.14,
-      infinite: false,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+      syncTouchLerp: 0.11,
+      touchInertiaMultiplier: 1.12,
+      wheelMultiplier: isTouchFirst ? 0.92 : 0.78,
+      touchMultiplier: 1.04,
+      infinite: false
     });
 
-    const update = (time: number) => {
-      lenis.raf(time * 1000);
+    let rafId = 0;
+    const raf = (time: number) => {
+      lenis.raf(time);
+      rafId = window.requestAnimationFrame(raf);
     };
 
-    gsap.ticker.add(update);
-    gsap.ticker.lagSmoothing(0);
-    lenis.on("scroll", ScrollTrigger.update);
+    rafId = window.requestAnimationFrame(raf);
 
-    const refresh = () => {
-      lenis.resize();
-      ScrollTrigger.refresh();
-    };
+    const refresh = () => lenis.resize();
     window.addEventListener("load", refresh);
+    window.addEventListener("resize", refresh);
 
     return () => {
       window.removeEventListener("load", refresh);
-      gsap.ticker.remove(update);
+      window.removeEventListener("resize", refresh);
+      window.cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);

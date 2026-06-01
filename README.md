@@ -71,3 +71,11 @@ rm -rf .next node_modules
 npm ci --no-audit --no-fund --prefer-online
 npm run build
 ```
+
+
+## Final V15 updates
+
+- Smoother Lenis RAF scrolling with balanced wheel/touch inertia.
+- Engine card lowered and triangular prism composition refined.
+- Mobile hero alignment updated: left-aligned typography, CTAs below description, Live Vault below CTAs.
+- Footer Shutdown button added with CRT-style power-down overlay.

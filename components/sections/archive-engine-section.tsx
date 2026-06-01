@@ -44,7 +44,7 @@ export function ArchiveEngineSection({ archive, topLanguages }: { archive: Archi
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="relative min-h-[290px] overflow-hidden rounded-[1.28rem] border border-museum-line/10 bg-museum-paper/[0.035] p-3.5 shadow-glass backdrop-blur-2xl md:min-h-[355px] md:p-4"
+          className="relative min-h-[290px] overflow-hidden rounded-[1.28rem] border border-museum-line/10 bg-museum-paper/[0.035] p-3.5 shadow-glass backdrop-blur-2xl md:min-h-[355px] md:p-4 lg:mt-10"
         >
           <div className="museum-grid absolute inset-0 opacity-18" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--museum-acid),0.12),transparent_35%),radial-gradient(circle_at_75%_20%,rgba(var(--museum-cyan),0.1),transparent_32%)]" />
