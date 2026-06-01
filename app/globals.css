@@ -55,6 +55,24 @@ html {
   background: var(--background);
 }
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -466,13 +484,17 @@ html[data-theme="light"] .hero-drawable-stroke {
 }
 
 .hero-marquee {
-  animation: hero-marquee 30s linear infinite;
+  animation: hero-marquee 24s linear infinite;
   will-change: transform;
 }
 
+.hero-marquee:hover {
+  animation-play-state: running;
+}
+
 @keyframes hero-marquee {
-  from { transform: translate3d(-50%, 0, 0); }
-  to { transform: translate3d(0, 0, 0); }
+  from { transform: translate3d(-48%, 0, 0); }
+  to { transform: translate3d(0%, 0, 0); }
 }
 
 .clean-select-trigger {
@@ -1121,7 +1143,7 @@ html[data-theme="light"] .artifact-label {
   }
 
   .hero-marquee {
-    animation-duration: 34s;
+    animation-duration: 28s;
   }
 
   .museum-grid {

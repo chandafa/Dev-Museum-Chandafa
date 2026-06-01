@@ -111,7 +111,7 @@ export function HeroSection({ archive, topLanguages }: { archive: ArchivePayload
       </div>
 
       <div className="relative z-10 mx-auto mt-4 max-w-[1040px] overflow-hidden rounded-full border border-museum-line/10 bg-museum-paper/[0.035] py-1.5 backdrop-blur-xl sm:mt-6 sm:py-2">
-        <div className="hero-marquee flex w-max items-center gap-6 whitespace-nowrap text-[0.48rem] uppercase tracking-[0.18em] text-museum-muted sm:gap-8 sm:text-[0.56rem] sm:tracking-[0.22em]">
+        <div className="hero-marquee flex min-w-max items-center whitespace-nowrap text-[0.48rem] uppercase tracking-[0.18em] text-museum-muted sm:text-[0.56rem] sm:tracking-[0.22em]">
           {[0, 1].map((loop) => (
             <div key={loop} className="flex items-center gap-6 px-3 sm:gap-8 sm:px-4">
               <span className="text-museum-acid">Live GitHub signal</span>

@@ -44,21 +44,21 @@ export function ArchiveEngineSection({ archive, topLanguages }: { archive: Archi
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="relative min-h-[310px] overflow-hidden md:min-h-[410px] rounded-[1.4rem] border border-museum-line/10 bg-museum-paper/[0.035] p-4 shadow-glass backdrop-blur-2xl"
+          className="relative min-h-[290px] overflow-hidden rounded-[1.28rem] border border-museum-line/10 bg-museum-paper/[0.035] p-3.5 shadow-glass backdrop-blur-2xl md:min-h-[355px] md:p-4"
         >
           <div className="museum-grid absolute inset-0 opacity-18" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--museum-acid),0.12),transparent_35%),radial-gradient(circle_at_75%_20%,rgba(var(--museum-cyan),0.1),transparent_32%)]" />
           <ThreeArchiveCore projects={featured} />
 
-          <div className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-museum-line/10 bg-museum-ink/50 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.18em] text-museum-muted backdrop-blur-xl">
+          <div className="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-museum-line/10 bg-museum-ink/50 px-2.5 py-1.5 text-[0.54rem] uppercase tracking-[0.16em] text-museum-muted backdrop-blur-xl md:left-4 md:top-4 md:px-3 md:text-[0.58rem]">
             Three.js prism core
           </div>
-          <div className="pointer-events-none absolute right-4 top-4 z-10 rounded-full border border-museum-line/10 bg-museum-ink/50 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.18em] text-museum-acid backdrop-blur-xl">
+          <div className="pointer-events-none absolute right-3 top-3 z-10 rounded-full border border-museum-line/10 bg-museum-ink/50 px-2.5 py-1.5 text-[0.54rem] uppercase tracking-[0.16em] text-museum-acid backdrop-blur-xl md:right-4 md:top-4 md:px-3 md:text-[0.58rem]">
             {featured.length} signals
           </div>
-          <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap gap-1.5">
+          <div className="absolute bottom-3 left-3 right-3 z-10 flex flex-wrap gap-1.5 md:bottom-4 md:left-4 md:right-4">
             {topLanguages.slice(0, 5).map(([language, count]) => (
-              <span key={language} className="rounded-full border border-museum-line/10 bg-museum-ink/50 px-2.5 py-1 text-[0.55rem] uppercase tracking-[0.13em] text-museum-muted backdrop-blur-xl">
+              <span key={language} className="rounded-full border border-museum-line/10 bg-museum-ink/50 px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.13em] text-museum-muted backdrop-blur-xl md:text-[0.55rem]">
                 {language} / {count}
               </span>
             ))}

@@ -18,11 +18,15 @@ export function SmoothProvider({ children }: { children: ReactNode }) {
     }
 
     const lenis = new Lenis({
-      duration: isTouchFirst ? 0.64 : 1.04,
+      duration: isTouchFirst ? 1.0 : 1.18,
       smoothWheel: true,
-      wheelMultiplier: isTouchFirst ? 0.94 : 0.82,
-      touchMultiplier: 1.08,
-      infinite: false
+      syncTouch: true,
+      syncTouchLerp: 0.12,
+      touchInertiaMultiplier: 1.06,
+      wheelMultiplier: isTouchFirst ? 0.98 : 0.92,
+      touchMultiplier: 1.14,
+      infinite: false,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
     });
 
     const update = (time: number) => {
@@ -33,7 +37,10 @@ export function SmoothProvider({ children }: { children: ReactNode }) {
     gsap.ticker.lagSmoothing(0);
     lenis.on("scroll", ScrollTrigger.update);
 
-    const refresh = () => ScrollTrigger.refresh();
+    const refresh = () => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    };
     window.addEventListener("load", refresh);
 
     return () => {

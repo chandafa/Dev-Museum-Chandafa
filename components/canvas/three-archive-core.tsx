@@ -37,7 +37,7 @@ export function ThreeArchiveCore({ projects }: { projects: MuseumProject[] }) {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, mount.clientWidth / mount.clientHeight, 0.1, 100);
-    camera.position.set(0, 0.18, 5.8);
+    camera.position.set(0, 0.14, 6.4);
     camera.lookAt(0, -0.05, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
@@ -52,6 +52,7 @@ export function ThreeArchiveCore({ projects }: { projects: MuseumProject[] }) {
     const prism = new THREE.Group();
     prism.rotation.x = -0.08;
     prism.rotation.z = 0.02;
+    prism.scale.setScalar(0.82);
     root.add(prism);
 
     const edgeMaterial = new THREE.MeshStandardMaterial({
@@ -89,11 +90,11 @@ export function ThreeArchiveCore({ projects }: { projects: MuseumProject[] }) {
       metalness: 0.2
     });
 
-    const top = new THREE.Vector3(0, 1.48, 0);
-    const left = new THREE.Vector3(-1.48, -1.04, 0.72);
-    const right = new THREE.Vector3(1.48, -1.04, 0.72);
-    const back = new THREE.Vector3(0, -1.04, -1.48);
-    const center = new THREE.Vector3(0, -0.28, 0.02);
+    const top = new THREE.Vector3(0, 1.34, 0);
+    const left = new THREE.Vector3(-1.34, -0.98, 0.64);
+    const right = new THREE.Vector3(1.34, -0.98, 0.64);
+    const back = new THREE.Vector3(0, -0.98, -1.34);
+    const center = new THREE.Vector3(0, -0.25, 0.02);
     const vertices = [top, left, right, back];
 
     const faces = [
@@ -142,11 +143,11 @@ export function ThreeArchiveCore({ projects }: { projects: MuseumProject[] }) {
         transparent: true,
         opacity: 0.66
       });
-      const width = 0.12 + Math.min(0.28, project.score / 420);
+      const width = 0.1 + Math.min(0.24, project.score / 480);
       const chip = new THREE.Mesh(new THREE.BoxGeometry(width, 0.025, 0.042), material);
       const side = index % 2 === 0 ? -1 : 1;
       const row = Math.floor(index / 2);
-      chip.position.set(side * (1.08 + row * 0.04), 0.84 - row * 0.22, 0.92 - row * 0.08);
+      chip.position.set(side * (0.94 + row * 0.035), 0.72 - row * 0.2, 0.8 - row * 0.075);
       chip.rotation.y = side * 0.62;
       chip.userData.phase = index * 0.42;
       labelGroup.add(chip);
@@ -157,9 +158,9 @@ export function ThreeArchiveCore({ projects }: { projects: MuseumProject[] }) {
     const acid = colorFromCss("--museum-acid", "#d7ff58");
     scene.add(new THREE.AmbientLight("#ffffff", 0.8));
     const key = new THREE.PointLight(acid, 1.45, 8);
-    key.position.set(2.8, 2.8, 3.2);
+    key.position.set(2.5, 2.5, 3.0);
     const rim = new THREE.PointLight(cyan, 1.25, 8);
-    rim.position.set(-2.6, -1.2, 2.6);
+    rim.position.set(-2.3, -1.1, 2.5);
     scene.add(key, rim);
 
     const syncThemeColors = () => {
@@ -195,10 +196,10 @@ export function ThreeArchiveCore({ projects }: { projects: MuseumProject[] }) {
     };
 
     const animate = () => {
-      frame += prefersReducedMotion ? 0.004 : 0.013;
-      prism.rotation.y += prefersReducedMotion ? 0.002 : 0.009;
-      prism.rotation.x = -0.1 + Math.sin(frame * 0.72) * 0.07;
-      prism.rotation.z = Math.sin(frame * 0.5) * 0.035;
+      frame += prefersReducedMotion ? 0.004 : 0.0115;
+      prism.rotation.y += prefersReducedMotion ? 0.0018 : 0.0076;
+      prism.rotation.x = -0.1 + Math.sin(frame * 0.72) * 0.05;
+      prism.rotation.z = Math.sin(frame * 0.5) * 0.024;
       labelGroup.children.forEach((child) => {
         child.position.y += Math.sin(frame * 2.1 + child.userData.phase) * 0.0008;
       });
