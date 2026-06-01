@@ -17,7 +17,6 @@ export function SmoothProvider({ children }: { children: ReactNode }) {
       smoothWheel: true,
       syncTouch: true,
       syncTouchLerp: 0.11,
-      touchInertiaMultiplier: 1.12,
       wheelMultiplier: isTouchFirst ? 0.92 : 0.78,
       touchMultiplier: 1.04,
       infinite: false
