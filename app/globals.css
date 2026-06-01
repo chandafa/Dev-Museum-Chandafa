@@ -4,6 +4,7 @@
 
 :root,
 html[data-theme="dark"] {
+  --font-outfit: "Outfit", "Inter", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
   color-scheme: dark;
   --museum-ink: 13 14 16;
   --museum-paper: 244 240 232;
@@ -433,4 +434,406 @@ html[data-theme="light"] .hero-drawable-stroke {
   22% { opacity: 1; }
   70% { opacity: 0.8; }
   100% { transform: translateY(60%); opacity: 0; }
+}
+
+.mechanical-button {
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 180ms cubic-bezier(.16,1,.3,1), box-shadow 180ms ease, background 220ms ease, border-color 220ms ease, opacity 220ms ease;
+}
+
+.mechanical-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgb(var(--museum-paper) / 0.12), transparent);
+  transform: translateX(-120%);
+  transition: opacity 200ms ease, transform 520ms cubic-bezier(.16,1,.3,1);
+}
+
+.mechanical-button:hover::after {
+  opacity: 1;
+  transform: translateX(120%);
+}
+
+.mechanical-button:active {
+  transform: translateY(1.5px) scale(0.985);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.22);
+}
+
+.hero-marquee {
+  animation: hero-marquee 28s linear infinite;
+}
+
+@keyframes hero-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.clean-select-trigger {
+  height: 2.16rem;
+  border-radius: 0.85rem;
+  background:
+    linear-gradient(180deg, rgb(var(--museum-paper) / 0.07), rgb(var(--museum-paper) / 0.032)),
+    linear-gradient(90deg, rgb(var(--museum-line) / 0.055), transparent 34%);
+  box-shadow: inset 0 1px 0 rgb(var(--museum-line) / 0.09), 0 10px 24px rgba(0,0,0,.12);
+}
+
+.clean-select-rail {
+  height: 0.85rem;
+  width: 1px;
+  flex-shrink: 0;
+  background: rgb(var(--museum-line) / 0.18);
+  box-shadow: 4px 0 0 rgb(var(--museum-line) / 0.12), 8px 0 0 rgb(var(--museum-line) / 0.08);
+}
+
+.clean-select-value {
+  font-size: 0.52rem;
+  letter-spacing: 0.145em;
+}
+
+.clean-select-panel {
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 88%, rgb(var(--museum-paper)) 12%), color-mix(in srgb, var(--background) 94%, rgb(var(--museum-paper)) 6%));
+  box-shadow: 0 26px 78px rgba(0,0,0,.36), inset 0 1px 0 rgb(var(--museum-line) / 0.08);
+}
+
+.clean-select-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.48rem;
+}
+
+.clean-select-led {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgb(var(--museum-acid));
+  box-shadow: 0 0 22px rgb(var(--museum-acid) / 0.55);
+}
+
+.clean-select-option {
+  min-height: 1.92rem;
+  border: 1px solid transparent;
+  font-size: 0.52rem;
+}
+
+.clean-select-option.is-keyboard-active:not(.is-active),
+.clean-select-option:hover {
+  border-color: rgb(var(--museum-line) / 0.1);
+  background: rgb(var(--museum-paper) / 0.075);
+}
+
+.clean-select-dot {
+  width: 0.32rem;
+  height: 0.32rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: rgb(var(--museum-line) / 0.14);
+}
+
+.sorting-ritual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgb(var(--museum-acid) / 0.14), transparent);
+  animation: sorting-ritual 0.86s cubic-bezier(.16,1,.3,1) infinite;
+}
+
+@keyframes sorting-ritual {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.repo-focus-grid:has(.museum-shelf-card:hover) .museum-shelf-card:not(:hover) {
+  opacity: 0.34;
+  filter: blur(2px) saturate(0.68);
+}
+
+.museum-shelf-card {
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.museum-shelf-card::before {
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.45rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--museum-line) / 0.18), transparent);
+}
+
+.shelf-slot {
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  top: 0.6rem;
+  height: 1px;
+  opacity: 0.7;
+  background: linear-gradient(90deg, transparent, rgb(var(--museum-acid) / 0.18), transparent);
+}
+
+.trailer-scanline {
+  position: absolute;
+  inset: -40% 0;
+  background: linear-gradient(180deg, transparent, rgb(var(--museum-acid) / 0.09), transparent);
+  animation: trailer-scanline 3.2s cubic-bezier(.16,1,.3,1) infinite;
+}
+
+@keyframes trailer-scanline {
+  0% { transform: translateY(-55%); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: translateY(55%); opacity: 0; }
+}
+
+.film-strip {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--museum-paper) / 0.25) transparent;
+}
+
+.film-strip::-webkit-scrollbar {
+  height: 7px;
+}
+
+.film-strip::-webkit-scrollbar-thumb {
+  background: rgb(var(--museum-paper) / 0.22);
+}
+
+.film-frame {
+  min-height: 142px;
+}
+
+.film-frame::before,
+.film-frame::after {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  right: 0.45rem;
+  height: 7px;
+  background-image: radial-gradient(circle, rgb(var(--museum-line) / 0.22) 1.4px, transparent 1.6px);
+  background-size: 14px 7px;
+  opacity: 0.8;
+}
+
+.film-frame::before { top: 0.4rem; }
+.film-frame::after { bottom: 0.4rem; }
+
+.film-perf {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgb(var(--museum-line) / 0.1);
+}
+
+.film-perf-top { top: 1.3rem; }
+.film-perf-bottom { bottom: 1.3rem; }
+
+.ticket-printer-mouth {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: -2px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgb(var(--museum-paper) / 0.16);
+  box-shadow: 0 12px 28px rgb(var(--museum-ink) / 0.25);
+}
+
+.ticket-print-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-height: 2.25rem;
+  border-radius: 0.65rem;
+  border: 1px dashed rgb(var(--museum-line) / 0.18);
+  background: rgb(var(--museum-paper) / 0.82);
+  color: rgb(var(--museum-ink));
+  padding: 0.55rem 0.75rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  animation: ticket-print 0.95s cubic-bezier(.16,1,.3,1) both;
+}
+
+.ticket-print-preview b {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+}
+
+@keyframes ticket-print {
+  0% { clip-path: inset(0 0 100% 0); transform: translateY(-16px); }
+  45% { clip-path: inset(0 0 30% 0); }
+  100% { clip-path: inset(0 0 0% 0); transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-marquee,
+  .sorting-ritual::before,
+  .trailer-scanline,
+  .ticket-print-preview,
+  .drawable-text,
+  .drawable-stage::after {
+    animation: none !important;
+  }
+}
+
+/* V10 refinements */
+.xray-card:hover .xray-layer {
+  opacity: 0;
+  transform: translateY(8px);
+  max-height: 0;
+}
+
+.xray-card.is-xray-active {
+  border-color: rgb(var(--museum-cyan) / 0.46);
+  background: rgb(var(--museum-paper) / 0.065);
+}
+
+.xray-card.is-xray-active .xray-layer {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 8.5rem;
+}
+
+.xray-card.is-xray-active .xray-glow {
+  opacity: 1;
+}
+
+.clean-select:has(.clean-select-panel) {
+  z-index: 140;
+}
+
+.clean-select-panel {
+  z-index: 160;
+  min-width: min(16rem, 86vw);
+}
+
+.ticket-print-preview {
+  position: relative;
+  overflow: hidden;
+  animation: ticket-print 2.15s cubic-bezier(.16,1,.3,1) both;
+}
+
+.ticket-print-feed {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(var(--museum-ink) / 0.12), transparent);
+  animation: ticket-feed-scan 0.78s linear infinite;
+}
+
+.ticket-print-head span:first-child {
+  max-width: 72%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes ticket-feed-scan {
+  from { transform: translateX(-115%); }
+  to { transform: translateX(115%); }
+}
+
+@media (max-width: 640px) {
+  .museum-grid {
+    background-size: 32px 32px;
+  }
+
+  body::before {
+    opacity: 0.11;
+  }
+
+  .museum-room {
+    scroll-margin-top: 4.8rem;
+  }
+
+  .clean-select-trigger {
+    height: 2rem;
+    border-radius: 0.78rem;
+    padding-inline: 0.62rem;
+  }
+
+  .clean-select-value {
+    font-size: 0.48rem;
+    letter-spacing: 0.11em;
+  }
+
+  .clean-select-panel {
+    min-width: min(18rem, calc(100vw - 2rem));
+  }
+
+  .clean-select-option {
+    min-height: 1.78rem;
+    padding: 0.46rem 0.55rem;
+    font-size: 0.49rem;
+  }
+
+  .museum-shelf-card {
+    min-height: 228px;
+    border-radius: 1rem;
+    padding: 0.82rem;
+  }
+
+  .xray-card.is-xray-active .xray-layer {
+    max-height: 9rem;
+  }
+
+  .film-frame {
+    width: 136px !important;
+    min-height: 124px;
+    padding: 0.7rem !important;
+  }
+
+  .ticket-print-preview {
+    min-height: 2rem;
+    font-size: 0.48rem;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .ticket-print-preview b {
+    font-size: 0.56rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-print-feed {
+    animation: none !important;
+  }
+}
+
+.xray-card:hover {
+  border-color: rgb(var(--museum-line) / 0.1);
+  background: rgb(var(--museum-paper) / 0.04);
+}
+
+.xray-card:hover .xray-glow {
+  opacity: 0;
+}
+
+.xray-card.is-xray-active:hover,
+.xray-card.is-xray-active {
+  border-color: rgb(var(--museum-cyan) / 0.46);
+  background: rgb(var(--museum-paper) / 0.065);
+}
+
+.xray-card.is-xray-active:hover .xray-glow,
+.xray-card.is-xray-active .xray-glow {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-print-preview,
+  .ticket-print-feed,
+  .xray-card:hover .xray-scan {
+    animation: none !important;
+  }
 }

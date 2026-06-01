@@ -1,14 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Outfit } from "next/font/google";
 import "./globals.css";
 import { SmoothProvider } from "@/components/smooth-provider";
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  display: "swap"
-});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dev-museum.vercel.app";
 const ownerName = process.env.NEXT_PUBLIC_OWNER_NAME || "Candra Kirana";
@@ -108,7 +101,7 @@ const themeScript = `
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" className={outfit.variable} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

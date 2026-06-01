@@ -93,7 +93,7 @@ export function Navigation({ owner }: { owner: GitHubOwner }) {
           <button
             type="button"
             onClick={toggleTheme}
-            className="group grid size-11 place-items-center rounded-full border border-museum-line/20 bg-museum-ink/35 text-museum-paper backdrop-blur-xl transition-colors hover:bg-museum-paper/10"
+            className="mechanical-button group grid size-11 place-items-center rounded-full border border-museum-line/20 bg-museum-ink/35 text-museum-paper backdrop-blur-xl transition-colors hover:bg-museum-paper/10"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             title={theme === "dark" ? "Light mode" : "Dark mode"}
           >
@@ -113,7 +113,7 @@ export function Navigation({ owner }: { owner: GitHubOwner }) {
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
-            className="group relative flex h-11 items-center gap-3 rounded-full border border-museum-line/20 bg-museum-ink/35 px-4 text-xs uppercase tracking-[0.24em] text-museum-paper backdrop-blur-xl transition-colors hover:bg-museum-paper/10"
+            className="mechanical-button group relative flex h-11 items-center gap-3 rounded-full border border-museum-line/20 bg-museum-ink/35 px-4 text-[0.62rem] uppercase tracking-[0.2em] text-museum-paper backdrop-blur-xl transition-colors hover:bg-museum-paper/10"
             aria-expanded={open}
             aria-label="Open navigation menu"
           >
@@ -144,7 +144,7 @@ export function Navigation({ owner }: { owner: GitHubOwner }) {
                     key={item.href}
                     href={item.href}
                     onClick={close}
-                    className="menu-reveal group flex items-center justify-between border-t border-museum-line/10 py-3 text-[clamp(3rem,10vw,7rem)] font-semibold leading-[0.84] tracking-[-0.11em] text-museum-paper last:border-b md:py-4"
+                    className="menu-reveal group flex items-center justify-between border-t border-museum-line/10 py-2 text-[clamp(2.2rem,7vw,4.9rem)] font-semibold leading-[0.84] tracking-[-0.11em] text-museum-paper last:border-b md:py-3"
                   >
                     <span className="transition-transform duration-500 ease-out group-hover:translate-x-6 group-hover:text-museum-acid">{item.label}</span>
                     <span className="text-sm font-normal tracking-[0.25em] text-museum-muted">0{index + 1}</span>

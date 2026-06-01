@@ -63,28 +63,11 @@ export function ThreeMuseumOrb() {
     scene.add(pointLight);
     scene.add(new THREE.AmbientLight("#ffffff", 0.6));
 
-    const starsGeometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(420 * 3);
-    for (let i = 0; i < positions.length; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 6;
-      positions[i + 1] = (Math.random() - 0.5) * 6;
-      positions[i + 2] = (Math.random() - 0.5) * 6;
-    }
-    starsGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const starsMaterial = new THREE.PointsMaterial({
-      color: colorFromCss("--museum-paper", "#f4f0e8"),
-      size: 0.01,
-      transparent: true,
-      opacity: 0.72
-    });
-    const stars = new THREE.Points(starsGeometry, starsMaterial);
-    scene.add(stars);
-
     const syncThemeColors = () => {
+
       coreMaterial.color = colorFromCss("--museum-paper", "#f4f0e8");
       ringAMaterial.color = colorFromCss("--museum-acid", "#d7ff58");
       ringBMaterial.color = colorFromCss("--museum-cyan", "#80f7ff");
-      starsMaterial.color = colorFromCss("--museum-paper", "#f4f0e8");
       pointLight.color = colorFromCss("--museum-acid", "#d7ff58");
     };
 
@@ -104,7 +87,6 @@ export function ThreeMuseumOrb() {
       frame += 0.01;
       group.rotation.y += 0.006;
       group.rotation.x = Math.sin(frame) * 0.18;
-      stars.rotation.y -= 0.0009;
       renderer.render(scene, camera);
       animation = requestAnimationFrame(animate);
     };
@@ -123,8 +105,6 @@ export function ThreeMuseumOrb() {
       coreMaterial.dispose();
       ringAMaterial.dispose();
       ringBMaterial.dispose();
-      starsMaterial.dispose();
-      starsGeometry.dispose();
       mount.removeChild(renderer.domElement);
     };
   }, []);

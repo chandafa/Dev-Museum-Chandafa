@@ -7,16 +7,23 @@ A cinematic GitHub-powered project archive built with Next.js App Router, Tailwi
 - GitHub auto-sync repository archive
 - Awwwards-style fullscreen navigation
 - Simple dark / light mode without heavy overlay effects
-- 3D Archive Engine orbit built with Three.js
-- Custom clean dropdown filters for archive and timeline
-- Repo card X-Ray hover inspection without scale/jump effects
+- 3D Archive Engine data core built with Three.js
+- Clean mechanical dropdown filters for archive and timeline
+- Repository sorting animation with re-indexing ritual
+- Museum shelf slide animation for project cards
+- Repo Focus Mode that dims neighboring artifacts on hover
+- Repo card X-Ray inspection on click, with scanline-only hover
+- Project Trailer Generator for each repository card
+- Command Palette Overlay with Ctrl/Cmd + K and / shortcuts
 - Signal Theater section before the exit gift
-- Timeline digest with year selector and expandable pulses
-- PDF Exit Gift ticket generator with clean printable ticket design
+- Timeline Film Strip with projector-style selected frame
+- PDF Exit Gift ticket generator with longer staged print animation and clean printable ticket design
 - SVG createDrawable-style animation on the Museum hero text
 - Hidden interactive Control Room page unlocked by clicking the DM logo 3 times
 - SEO metadata, sitemap, robots, manifest, copyright, and deploy-safe security headers
 - Server-side GitHub sync cached with 5-minute revalidation for production friendliness
+- Soft mechanical button press interactions across key controls
+- Hero metadata marquee below the entrance section
 - Basic interaction guard for right-click, Ctrl+U, and DevTools shortcuts
 
 > The interaction guard is only a casual deterrent. Frontend source can never be fully hidden in a browser.

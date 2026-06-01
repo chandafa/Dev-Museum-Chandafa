@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Download, Sparkles, Ticket } from "lucide-react";
 import type { ArchivePayload } from "@/types/project";
 
@@ -95,8 +95,12 @@ function makeTicketPdf({ code, owner, total, dominantLanguage, featuredArtifact 
   return new Blob([pdf], { type: "application/pdf" });
 }
 
+const printSteps = ["Preparing paper stock", "Drawing ticket layout", "Embedding archive data", "Cutting PDF edges", "Ready to download"];
+
 export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
   const [generated, setGenerated] = useState(false);
+  const [printing, setPrinting] = useState(false);
+  const [printStep, setPrintStep] = useState(0);
   const dominantLanguage = useMemo(() => {
     const map = new Map<string, number>();
     archive.projects.forEach((project) => {
@@ -124,6 +128,27 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
     URL.revokeObjectURL(url);
   };
 
+  const printTicket = () => {
+    if (printing) return;
+    setPrinting(true);
+    setGenerated(false);
+    setPrintStep(0);
+
+    let step = 0;
+    const interval = window.setInterval(() => {
+      step += 1;
+      setPrintStep(Math.min(step, printSteps.length - 1));
+    }, 460);
+
+    window.setTimeout(() => {
+      window.clearInterval(interval);
+      setPrintStep(printSteps.length - 1);
+      downloadTicket();
+      setGenerated(true);
+      setPrinting(false);
+    }, 2650);
+  };
+
   return (
     <section id="exit-gift" data-room="Exit Gift" className="museum-room relative px-6 py-14 sm:px-8 md:px-10 md:py-16 lg:px-0">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-museum-line/15 to-transparent" />
@@ -135,7 +160,7 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="mb-2.5 text-[0.62rem] uppercase tracking-[0.28em] text-museum-acid">Exit Gift / 007</p>
-          <h2 className="text-balance text-3xl font-semibold leading-[0.94] tracking-[-0.075em] text-museum-paper md:text-4xl">
+          <h2 className="text-balance text-2xl font-semibold leading-[0.94] tracking-[-0.075em] text-museum-paper sm:text-3xl md:text-4xl">
             Every visitor leaves with a clean PDF museum ticket.
           </h2>
           <p className="mt-4 max-w-[28rem] text-xs leading-6 text-museum-muted md:text-sm">
@@ -151,7 +176,8 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
           className="relative overflow-hidden rounded-[1.45rem] border border-museum-line/10 bg-museum-paper/[0.04] p-4 shadow-glass backdrop-blur-2xl"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(var(--museum-acid),0.12),transparent_36%),radial-gradient(circle_at_80%_70%,rgba(var(--museum-cyan),0.11),transparent_36%)]" />
-          <div className="relative z-10 rounded-[1.15rem] border border-dashed border-museum-line/20 bg-museum-paper/[0.035] p-4 backdrop-blur-xl">
+          <div className="ticket-printer relative z-10 rounded-[1.15rem] border border-dashed border-museum-line/20 bg-museum-paper/[0.035] p-4 backdrop-blur-xl">
+            <div className="ticket-printer-mouth" />
             <div className="absolute -right-3 top-1/2 size-7 -translate-y-1/2 rounded-full bg-[var(--background)]" />
             <div className="absolute -left-3 top-1/2 size-7 -translate-y-1/2 rounded-full bg-[var(--background)]" />
             <div className="flex items-center justify-between gap-3 border-b border-dashed border-museum-line/15 pb-3">
@@ -172,13 +198,48 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
               <TicketField label="Owner" value={`@${archive.owner.login}`} />
             </div>
 
+            <AnimatePresence>
+              {printing ? (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: "auto" }}
+                  exit={{ opacity: 0, y: -8, height: 0 }}
+                  className="mb-3 overflow-hidden rounded-[1rem] border border-museum-acid/20 bg-museum-acid/10 p-2.5"
+                >
+                  <div className="ticket-print-head mb-2 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.16em] text-museum-acid">
+                    <span>{printSteps[printStep]}</span>
+                    <span>{Math.min(100, Math.round(((printStep + 1) / printSteps.length) * 100))}%</span>
+                  </div>
+                  <div className="mb-2 h-1.5 overflow-hidden rounded-full bg-museum-paper/10">
+                    <motion.div
+                      className="h-full rounded-full bg-museum-acid"
+                      initial={false}
+                      animate={{ width: `${Math.min(100, Math.round(((printStep + 1) / printSteps.length) * 100))}%` }}
+                      transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                  </div>
+                  <div className="ticket-print-preview">
+                    <span className="ticket-print-feed" />
+                    <span>Printing visitor pass</span>
+                    <b>{code}</b>
+                  </div>
+                  <div className="mt-2 grid grid-cols-5 gap-1">
+                    {printSteps.map((step, index) => (
+                      <span key={step} className={`h-1 rounded-full ${index <= printStep ? "bg-museum-acid" : "bg-museum-paper/10"}`} />
+                    ))}
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+
             <button
               type="button"
-              onClick={() => { setGenerated(true); downloadTicket(); }}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-museum-paper px-4 py-3 text-[0.64rem] font-semibold uppercase tracking-[0.18em] text-museum-ink transition-opacity hover:opacity-85"
+              onClick={printTicket}
+              disabled={printing}
+              className="mechanical-button group inline-flex w-full items-center justify-center gap-2 rounded-full bg-museum-paper px-4 py-3 text-[0.64rem] font-semibold uppercase tracking-[0.18em] text-museum-ink transition-opacity hover:opacity-85 disabled:cursor-wait disabled:opacity-70"
             >
-              {generated ? "PDF ticket generated" : "Generate PDF ticket"}
-              {generated ? <Sparkles className="size-4" /> : <Download className="size-4 transition-transform group-hover:translate-y-0.5" />}
+              {printing ? "Printing PDF ticket..." : generated ? "PDF ticket generated" : "Generate PDF ticket"}
+              {generated && !printing ? <Sparkles className="size-4" /> : <Download className="size-4 transition-transform group-hover:translate-y-0.5" />}
             </button>
           </div>
         </motion.div>

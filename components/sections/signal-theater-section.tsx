@@ -30,7 +30,7 @@ export function SignalTheaterSection({ archive }: { archive: ArchivePayload }) {
           transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="mb-2.5 text-[0.62rem] uppercase tracking-[0.28em] text-museum-acid">Signal Theater / 006</p>
-          <h2 className="text-balance text-3xl font-semibold leading-[0.94] tracking-[-0.075em] text-museum-paper md:text-4xl">
+          <h2 className="text-balance text-2xl font-semibold leading-[0.94] tracking-[-0.075em] text-museum-paper sm:text-3xl md:text-4xl">
             Latest repositories broadcast like museum signals.
           </h2>
           <p className="mt-4 max-w-[27rem] text-xs leading-6 text-museum-muted md:text-sm">

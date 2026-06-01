@@ -14,6 +14,7 @@ import { ExitGiftSection } from "@/components/sections/exit-gift-section";
 import { Footer } from "@/components/sections/footer";
 import { CursorLight } from "@/components/ui/cursor-light";
 import { InteractionGuard } from "@/components/ui/interaction-guard";
+import { CommandPalette } from "@/components/ui/command-palette";
 
 export function HomeExperience({ archive }: { archive: ArchivePayload }) {
   const [showBoot, setShowBoot] = useState(true);
@@ -39,6 +40,7 @@ export function HomeExperience({ archive }: { archive: ArchivePayload }) {
     <main className="relative min-h-screen overflow-hidden">
       <InteractionGuard />
       <CursorLight />
+      <CommandPalette archive={archive} />
       <AnimatePresence mode="wait">
         {showBoot && (
           <motion.div
