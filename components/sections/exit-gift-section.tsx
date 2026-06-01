@@ -5,11 +5,16 @@ import { AnimatePresence, motion } from "motion/react";
 import { Download, Sparkles, Ticket } from "lucide-react";
 import type { ArchivePayload } from "@/types/project";
 
-function ticketCode(owner: string, total: number) {
-  const raw = `${owner}-${total}-${new Date().getFullYear()}`;
-  let hash = 0;
-  for (let index = 0; index < raw.length; index += 1) hash = (hash * 31 + raw.charCodeAt(index)) >>> 0;
-  return `DM-${hash.toString(16).slice(0, 6).toUpperCase()}`;
+function ticketCode() {
+  const array = new Uint32Array(2);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    crypto.getRandomValues(array);
+  } else {
+    array[0] = Math.floor(Math.random() * 0xffffffff);
+    array[1] = Date.now();
+  }
+  const raw = `${array[0].toString(16)}${array[1].toString(16)}${Date.now().toString(16)}`;
+  return `DM-${raw.slice(-8).toUpperCase()}`;
 }
 
 function pdfEscape(value: string | number) {
@@ -100,7 +105,9 @@ const printSteps = ["Preparing paper stock", "Drawing ticket layout", "Embedding
 export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
   const [generated, setGenerated] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [previewReady, setPreviewReady] = useState(false);
   const [printStep, setPrintStep] = useState(0);
+  const [code, setCode] = useState("DM-READY");
   const dominantLanguage = useMemo(() => {
     const map = new Map<string, number>();
     archive.projects.forEach((project) => {
@@ -110,11 +117,10 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
   }, [archive.projects]);
 
   const best = archive.projects.slice().sort((a, b) => b.score - a.score)[0];
-  const code = ticketCode(archive.owner.login, archive.stats.total);
 
-  const downloadTicket = () => {
+  const downloadTicket = (targetCode = code) => {
     const blob = makeTicketPdf({
-      code,
+      code: targetCode,
       owner: archive.owner.login,
       total: archive.stats.total,
       dominantLanguage,
@@ -123,7 +129,7 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `dev-museum-ticket-${code.toLowerCase()}.pdf`;
+    link.download = `dev-museum-ticket-${targetCode.toLowerCase()}.pdf`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -132,6 +138,9 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
     if (printing) return;
     setPrinting(true);
     setGenerated(false);
+    setPreviewReady(false);
+    const nextCode = ticketCode();
+    setCode(nextCode);
     setPrintStep(0);
 
     let step = 0;
@@ -143,10 +152,10 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
     window.setTimeout(() => {
       window.clearInterval(interval);
       setPrintStep(printSteps.length - 1);
-      downloadTicket();
       setGenerated(true);
+      setPreviewReady(true);
       setPrinting(false);
-    }, 2650);
+    }, 3150);
   };
 
   return (
@@ -232,13 +241,39 @@ export function ExitGiftSection({ archive }: { archive: ArchivePayload }) {
               ) : null}
             </AnimatePresence>
 
+            <AnimatePresence>
+              {previewReady ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 14, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                  className="ticket-pdf-preview mb-3 overflow-hidden rounded-[1rem] border border-museum-line/10 bg-museum-paper/[0.06] p-3"
+                >
+                  <div className="ticket-preview-paper">
+                    <div>
+                      <p>Dev Museum Pass</p>
+                      <h4>{code}</h4>
+                    </div>
+                    <span>{archive.stats.total} artifacts</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => downloadTicket(code)}
+                    className="mechanical-button mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-museum-line/10 bg-museum-paper px-4 py-2.5 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-museum-ink transition-opacity hover:opacity-85"
+                  >
+                    Download previewed PDF <Download className="size-3.5" />
+                  </button>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+
             <button
               type="button"
               onClick={printTicket}
               disabled={printing}
               className="mechanical-button group inline-flex w-full items-center justify-center gap-2 rounded-full bg-museum-paper px-4 py-3 text-[0.64rem] font-semibold uppercase tracking-[0.18em] text-museum-ink transition-opacity hover:opacity-85 disabled:cursor-wait disabled:opacity-70"
             >
-              {printing ? "Printing PDF ticket..." : generated ? "PDF ticket generated" : "Generate PDF ticket"}
+              {printing ? "Printing PDF preview..." : generated ? "Generate another random ticket" : "Generate PDF ticket"}
               {generated && !printing ? <Sparkles className="size-4" /> : <Download className="size-4 transition-transform group-hover:translate-y-0.5" />}
             </button>
           </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowDown, ArrowUpRight, Film, Play, Radio, Search, SlidersHorizontal, X } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Film, Play, Radar, Radio, RefreshCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import type { ArchiveStatus, MuseumProject } from "@/types/project";
 import { formatDate, timeAgo } from "@/lib/utils";
 import { CleanSelect } from "@/components/ui/clean-select";
@@ -40,7 +40,13 @@ export function ArchiveSection({ projects, source, message }: { projects: Museum
   const [trailerProject, setTrailerProject] = useState<MuseumProject | null>(null);
   const [xrayProjectId, setXrayProjectId] = useState<MuseumProject["id"] | null>(null);
   const [sorting, setSorting] = useState(false);
+  const [cataloging, setCataloging] = useState(true);
   const [animationKey, setAnimationKey] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCataloging(false), 720);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -73,14 +79,25 @@ export function ArchiveSection({ projects, source, message }: { projects: Museum
   }, [category, projects, query, sort, status]);
 
   useEffect(() => {
+    if (cataloging) return;
     setSorting(true);
     setAnimationKey((value) => value + 1);
+    setXrayProjectId(null);
     const timer = window.setTimeout(() => setSorting(false), 560);
     return () => window.clearTimeout(timer);
-  }, [category, status, sort, query]);
+  }, [category, status, sort, query, cataloging]);
 
   const visibleProjects = showAll ? filtered : filtered.slice(0, 6);
   const hiddenCount = Math.max(filtered.length - visibleProjects.length, 0);
+
+  const resetFilters = () => {
+    setQuery("");
+    setCategory(all);
+    setStatus(all);
+    setSort("score");
+    setShowAll(false);
+    setXrayProjectId(null);
+  };
 
   return (
     <section id="archive" data-room="Archive" className="museum-room relative px-6 py-14 sm:px-8 md:px-10 md:py-16 lg:px-0">
@@ -95,7 +112,7 @@ export function ArchiveSection({ projects, source, message }: { projects: Museum
           </div>
           <div className="max-w-[30rem] text-xs leading-6 text-museum-muted md:text-sm">
             <p>
-              Filter changes now run through a sorting ritual, cards slide in like shelves, hover runs a quick scanline, click opens X-Ray metadata, and each repository can play a short cinematic trailer generated from GitHub metadata.
+              Filter changes run through a sorting ritual, cards slide in like shelves, hover runs a quick scanline, click opens temporary X-Ray metadata, and every repository can play a longer cinematic trailer.
             </p>
             {source === "fallback" && message ? (
               <p className="mt-3 rounded-2xl border border-museum-ember/30 bg-museum-ember/10 p-3 text-xs text-museum-paper">{message}</p>
@@ -158,29 +175,36 @@ export function ArchiveSection({ projects, source, message }: { projects: Museum
           </div>
         </div>
 
-        <motion.div
-          key={animationKey}
-          className="repo-focus-grid mt-6 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3"
-          onMouseLeave={() => setFocusedId(null)}
-          initial="hidden"
-          animate="show"
-          variants={{ show: { transition: { staggerChildren: 0.055 } }, hidden: {} }}
-        >
-          {visibleProjects.map((project, index) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              index={index}
-              focusedId={focusedId}
-              onFocus={setFocusedId}
-              xrayActive={xrayProjectId === project.id}
-              onToggleXray={() => setXrayProjectId((value) => (value === project.id ? null : project.id))}
-              onTrailer={setTrailerProject}
-            />
-          ))}
-        </motion.div>
+        {cataloging ? (
+          <SkeletonMuseumGrid />
+        ) : filtered.length === 0 ? (
+          <SmartEmptyState query={query} onReset={resetFilters} />
+        ) : (
+          <motion.div
+            key={animationKey}
+            className="repo-focus-grid mt-6 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3"
+            onMouseLeave={() => { setFocusedId(null); setXrayProjectId(null); }}
+            initial="hidden"
+            animate="show"
+            variants={{ show: { transition: { staggerChildren: 0.055 } }, hidden: {} }}
+          >
+            {visibleProjects.map((project, index) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                index={index}
+                focusedId={focusedId}
+                onFocus={setFocusedId}
+                xrayActive={xrayProjectId === project.id}
+                onToggleXray={() => setXrayProjectId((value) => (value === project.id ? null : project.id))}
+                onClearXray={() => setXrayProjectId(null)}
+                onTrailer={setTrailerProject}
+              />
+            ))}
+          </motion.div>
+        )}
 
-        {filtered.length > 6 ? (
+        {!cataloging && filtered.length > 6 ? (
           <div className="mt-7 flex justify-center">
             <button
               type="button"
@@ -199,6 +223,60 @@ export function ArchiveSection({ projects, source, message }: { projects: Museum
   );
 }
 
+function SkeletonMuseumGrid() {
+  return (
+    <div className="mt-6 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3" aria-label="Cataloging archive artifacts">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.06, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="museum-skeleton-card relative min-h-[232px] overflow-hidden rounded-[1.15rem] border border-museum-line/10 bg-museum-paper/[0.035] p-3.5 shadow-glass backdrop-blur-xl"
+        >
+          <div className="skeleton-bar w-24" />
+          <div className="mt-6 skeleton-title" />
+          <div className="mt-3 skeleton-line w-[86%]" />
+          <div className="mt-2 skeleton-line w-[62%]" />
+          <div className="absolute bottom-4 left-3.5 right-3.5">
+            <div className="skeleton-bar w-28" />
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-museum-paper/10">
+              <div className="h-full w-1/2 rounded-full bg-museum-paper/20" />
+            </div>
+            <p className="mt-3 text-[0.52rem] uppercase tracking-[0.16em] text-museum-muted">Cataloging artifact...</p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function SmartEmptyState({ query, onReset }: { query: string; onReset: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      className="smart-empty-state relative mt-6 overflow-hidden rounded-[1.25rem] border border-museum-line/10 bg-museum-paper/[0.04] p-6 text-center shadow-glass backdrop-blur-2xl"
+    >
+      <div className="smart-empty-radar mx-auto mb-5 grid size-28 place-items-center rounded-full border border-museum-line/10 bg-museum-ink/30">
+        <Radar className="relative z-10 size-7 text-museum-acid" />
+      </div>
+      <p className="text-[0.58rem] uppercase tracking-[0.22em] text-museum-acid">No artifacts detected</p>
+      <h3 className="mx-auto mt-2 max-w-lg text-2xl font-semibold tracking-[-0.075em] text-museum-paper">Try another signal frequency.</h3>
+      <p className="mx-auto mt-3 max-w-md text-xs leading-6 text-museum-muted">
+        {query ? `The archive could not match “${query}”.` : "The current room, status, and sort combination returned nothing."}
+      </p>
+      <button
+        type="button"
+        onClick={onReset}
+        className="mechanical-button mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-museum-paper px-4 py-2.5 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-museum-ink"
+      >
+        <RefreshCcw className="size-3.5" /> Reset archive signal
+      </button>
+    </motion.div>
+  );
+}
+
 function ProjectCard({
   project,
   index,
@@ -206,6 +284,7 @@ function ProjectCard({
   onFocus,
   xrayActive,
   onToggleXray,
+  onClearXray,
   onTrailer
 }: {
   project: MuseumProject;
@@ -214,6 +293,7 @@ function ProjectCard({
   xrayActive: boolean;
   onFocus: (id: MuseumProject["id"] | null) => void;
   onToggleXray: () => void;
+  onClearXray: () => void;
   onTrailer: (project: MuseumProject) => void;
 }) {
   const hasReadmeSignal = project.description && !project.description.toLowerCase().includes("no description");
@@ -233,7 +313,9 @@ function ProjectCard({
       }}
       transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => onFocus(project.id)}
+      onMouseLeave={() => { onFocus(null); onClearXray(); }}
       onFocus={() => onFocus(project.id)}
+      onBlur={onClearXray}
       onClick={(event) => {
         const target = event.target as HTMLElement;
         if (target.closest("a,button")) return;
@@ -249,8 +331,8 @@ function ProjectCard({
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="mb-2 flex flex-wrap gap-1.5">
-                <span className="rounded-full border border-museum-line/10 px-2 py-0.5 text-[0.48rem] uppercase tracking-[0.13em] text-museum-muted">{project.category}</span>
-                <span className="rounded-full px-2 py-0.5 text-[0.48rem] uppercase tracking-[0.13em] text-museum-ink" style={{ backgroundColor: project.accent }}>{project.status}</span>
+                <span className="artifact-label rounded-full border border-museum-line/10 px-2 py-0.5 text-[0.48rem] uppercase tracking-[0.13em] text-museum-muted">{project.category}</span>
+                <span className="rounded-full px-2 py-0.5 text-[0.48rem] uppercase tracking-[0.13em] text-[#0d0e10]" style={{ backgroundColor: project.accent }}>{project.status}</span>
               </div>
               <h3 className="text-[1.08rem] font-semibold tracking-[-0.075em] text-museum-paper">{project.name}</h3>
             </div>
@@ -262,9 +344,9 @@ function ProjectCard({
           <p className="mt-2.5 line-clamp-3 text-[0.72rem] leading-5 text-museum-muted">{project.description}</p>
 
           <div className="mt-3.5 flex flex-wrap gap-1.5">
-            {project.language ? <span className="rounded-full bg-museum-paper/10 px-2 py-0.5 text-[0.62rem] text-museum-paper">{project.language}</span> : null}
+            {project.language ? <span className="artifact-label rounded-full bg-museum-paper/10 px-2 py-0.5 text-[0.62rem] text-museum-paper">{project.language}</span> : null}
             {project.topics.slice(0, 3).map((topic) => (
-              <span key={topic} className="rounded-full border border-museum-line/10 px-2 py-0.5 text-[0.62rem] text-museum-muted">#{topic}</span>
+              <span key={topic} className="artifact-label rounded-full border border-museum-line/10 px-2 py-0.5 text-[0.62rem] text-museum-muted">#{topic}</span>
             ))}
           </div>
 
@@ -275,7 +357,7 @@ function ProjectCard({
             </div>
             <div className="grid grid-cols-2 gap-1.5">
               {health.map((item) => (
-                <span key={item.label} className="flex items-center justify-between rounded-full border border-museum-line/10 px-2 py-1 text-[0.52rem] uppercase tracking-[0.1em] text-museum-muted">
+                <span key={item.label} className="artifact-label flex items-center justify-between rounded-full border border-museum-line/10 px-2 py-1 text-[0.52rem] uppercase tracking-[0.1em] text-museum-muted">
                   {item.label}
                   <b className={item.ok ? "text-museum-acid" : "text-museum-ember"}>{item.ok ? "OK" : "MISS"}</b>
                 </span>
@@ -298,7 +380,7 @@ function ProjectCard({
             <span>{timeAgo(project.updatedAt)}</span>
           </div>
           <div className="mt-3 flex items-center justify-between gap-2">
-            <p className="truncate text-[0.6rem] text-museum-muted">{xrayActive ? "X-Ray opened" : "Click card for X-Ray"}</p>
+            <p className="truncate text-[0.6rem] text-museum-muted">{xrayActive ? "X-Ray opened until pointer leaves" : "Click card for X-Ray"}</p>
             <button
               type="button"
               onClick={() => onTrailer(project)}
@@ -319,6 +401,7 @@ function ProjectTrailerModal({ project, onClose }: { project: MuseumProject | nu
         { label: "Artifact", value: project.name },
         { label: "Primary material", value: project.language || "Unknown stack" },
         { label: "Condition", value: project.status },
+        { label: "Last signal", value: formatDate(project.updatedAt) },
         { label: "Museum grade", value: `${project.score}/100` }
       ]
     : [];
@@ -339,41 +422,68 @@ function ProjectTrailerModal({ project, onClose }: { project: MuseumProject | nu
             initial={{ y: 26, opacity: 0, scale: 0.97 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 18, opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-[780px] overflow-hidden rounded-[1.6rem] border border-museum-line/15 bg-[var(--background)] shadow-glass"
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="relative w-full max-w-[820px] overflow-hidden rounded-[1.6rem] border border-museum-line/15 bg-[var(--background)] shadow-glass"
           >
+            <div className="trailer-cinema-bars" />
             <div className="trailer-scanline" />
+            <div className="trailer-data-cuts" />
             <div className="relative z-10 grid gap-0 md:grid-cols-[1fr_0.78fr]">
-              <div className="min-h-[360px] border-b border-museum-line/10 p-5 md:border-b-0 md:border-r md:p-6">
+              <div className="min-h-[390px] border-b border-museum-line/10 p-5 md:border-b-0 md:border-r md:p-6">
                 <div className="mb-5 flex items-center justify-between">
                   <span className="inline-flex items-center gap-2 rounded-full border border-museum-acid/25 px-3 py-1 text-[0.52rem] uppercase tracking-[0.18em] text-museum-acid"><Film className="size-3" /> Project trailer</span>
                   <button onClick={onClose} className="mechanical-button grid size-8 place-items-center rounded-full border border-museum-line/10 text-museum-paper hover:bg-museum-paper/10" aria-label="Close trailer"><X className="size-4" /></button>
                 </div>
 
-                <div className="flex min-h-[260px] flex-col justify-end rounded-[1.2rem] border border-museum-line/10 bg-museum-paper/[0.035] p-5">
+                <div className="trailer-stage relative flex min-h-[282px] flex-col justify-end overflow-hidden rounded-[1.2rem] border border-museum-line/10 bg-museum-paper/[0.035] p-5">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(var(--museum-acid),0.14),transparent_36%),radial-gradient(circle_at_84%_70%,rgba(var(--museum-cyan),0.12),transparent_38%)]" />
                   <motion.p
-                    className="text-[0.58rem] uppercase tracking-[0.2em] text-museum-muted"
+                    className="relative z-10 text-[0.58rem] uppercase tracking-[0.2em] text-museum-muted"
                     initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: [0, 1, 1], y: 0 }}
-                    transition={{ duration: 1.4 }}
+                    animate={{ opacity: [0, 1, 1, 0.75], y: 0 }}
+                    transition={{ duration: 2.4, times: [0, 0.24, 0.72, 1] }}
                   >
                     Now presenting
                   </motion.p>
                   <motion.h3
-                    className="mt-3 text-4xl font-semibold leading-[0.9] tracking-[-0.09em] text-museum-paper md:text-6xl"
-                    initial={{ opacity: 0, y: 36, filter: "blur(8px)" }}
+                    className="relative z-10 mt-3 text-4xl font-semibold leading-[0.9] tracking-[-0.09em] text-museum-paper md:text-6xl"
+                    initial={{ opacity: 0, y: 42, filter: "blur(12px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    transition={{ delay: 0.15, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ delay: 0.35, duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
                   >
                     {project.name}
                   </motion.h3>
+                  <motion.div
+                    className="relative z-10 mt-4 flex flex-wrap gap-1.5"
+                    initial="hidden"
+                    animate="show"
+                    variants={{ show: { transition: { staggerChildren: 0.16, delayChildren: 1.15 } }, hidden: {} }}
+                  >
+                    {[project.language || "Unknown", project.status, project.category].map((label) => (
+                      <motion.span
+                        key={label}
+                        variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+                        className="rounded-full border border-museum-line/10 bg-museum-paper/[0.06] px-2.5 py-1 text-[0.55rem] uppercase tracking-[0.14em] text-museum-paper"
+                      >
+                        {label}
+                      </motion.span>
+                    ))}
+                  </motion.div>
                   <motion.p
-                    className="mt-4 max-w-[30rem] text-sm leading-6 text-museum-muted"
+                    className="relative z-10 mt-4 max-w-[30rem] text-sm leading-6 text-museum-muted"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.45, duration: 0.7 }}
+                    transition={{ delay: 1.72, duration: 0.8 }}
                   >
                     {project.description}
+                  </motion.p>
+                  <motion.p
+                    className="relative z-10 mt-5 text-[0.55rem] uppercase tracking-[0.2em] text-museum-acid"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 1] }}
+                    transition={{ delay: 2.65, duration: 1.2 }}
+                  >
+                    Artifact indexed · ready for GitHub inspection
                   </motion.p>
                 </div>
               </div>
@@ -384,19 +494,27 @@ function ProjectTrailerModal({ project, onClose }: { project: MuseumProject | nu
                   {frames.map((frame, index) => (
                     <motion.div
                       key={frame.label}
-                      initial={{ x: 22, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.2 + index * 0.18, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-                      className="rounded-[1rem] border border-museum-line/10 bg-museum-paper/[0.04] p-3"
+                      initial={{ x: 26, opacity: 0, filter: "blur(8px)" }}
+                      animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
+                      transition={{ delay: 0.55 + index * 0.28, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                      className="trailer-frame rounded-[1rem] border border-museum-line/10 bg-museum-paper/[0.04] p-3"
                     >
                       <p className="text-[0.5rem] uppercase tracking-[0.16em] text-museum-muted">{frame.label}</p>
                       <p className="mt-1 truncate text-base font-semibold tracking-[-0.055em] text-museum-paper">{frame.value}</p>
                     </motion.div>
                   ))}
                 </div>
-                <a href={project.url} target="_blank" rel="noreferrer" className="mechanical-button mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-museum-paper px-4 py-3 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-museum-ink">
+                <motion.a
+                  href={project.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 2.75, duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                  className="mechanical-button mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-museum-paper px-4 py-3 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-museum-ink"
+                >
                   Open artifact <ArrowUpRight className="size-4" />
-                </a>
+                </motion.a>
               </div>
             </div>
           </motion.div>

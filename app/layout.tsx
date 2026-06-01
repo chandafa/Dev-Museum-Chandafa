@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { SmoothProvider } from "@/components/smooth-provider";
+import { PageIndexingTransition } from "@/components/ui/page-indexing-transition";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dev-museum.vercel.app";
 const ownerName = process.env.NEXT_PUBLIC_OWNER_NAME || "Candra Kirana";
@@ -106,7 +107,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <SmoothProvider>{children}</SmoothProvider>
+        <SmoothProvider><PageIndexingTransition />{children}</SmoothProvider>
       </body>
     </html>
   );

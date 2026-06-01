@@ -1,12 +1,19 @@
 "use client";
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 type CleanSelectOption = {
   value: string;
   label: string;
+};
+
+type PanelRect = {
+  top: number;
+  left: number;
+  width: number;
 };
 
 export function CleanSelect({
@@ -26,8 +33,22 @@ export function CleanSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const [panelRect, setPanelRect] = useState<PanelRect>({ top: 0, left: 0, width: 220 });
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const selected = useMemo(() => options.find((option) => option.value === value) ?? options[0], [options, value]);
+
+  useEffect(() => setMounted(true), []);
+
+  const updatePanelPosition = () => {
+    const trigger = rootRef.current?.querySelector("button");
+    if (!trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    const panelWidth = Math.max(rect.width, Math.min(280, window.innerWidth - 32));
+    const left = Math.min(Math.max(16, rect.left), window.innerWidth - panelWidth - 16);
+    setPanelRect({ top: rect.bottom + 8, left, width: panelWidth });
+  };
 
   useEffect(() => {
     const selectedIndex = Math.max(0, options.findIndex((option) => option.value === value));
@@ -35,9 +56,24 @@ export function CleanSelect({
   }, [options, value]);
 
   useEffect(() => {
-    const close = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    if (!open) return;
+    updatePanelPosition();
+    const onReposition = () => updatePanelPosition();
+    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", onReposition, true);
+    return () => {
+      window.removeEventListener("resize", onReposition);
+      window.removeEventListener("scroll", onReposition, true);
     };
+  }, [open]);
+
+  useEffect(() => {
+    const close = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+
     const handleKeys = (event: KeyboardEvent) => {
       if (!open) {
         if (rootRef.current?.contains(document.activeElement) && (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ")) {
@@ -73,6 +109,51 @@ export function CleanSelect({
     };
   }, [activeIndex, onChange, open, options]);
 
+  const panel = mounted ? createPortal(
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          ref={panelRef}
+          initial={{ opacity: 0, y: 10, scale: 0.985, clipPath: "inset(0 0 14% 0 round 16px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0% 0 round 16px)" }}
+          exit={{ opacity: 0, y: 8, scale: 0.985, clipPath: "inset(0 0 18% 0 round 16px)" }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          className="clean-select-panel clean-select-panel-portal"
+          role="listbox"
+          style={{ top: panelRect.top, left: panelRect.left, width: panelRect.width }}
+        >
+          <div className="clean-select-panel-head">
+            <span>{label}</span>
+            <span className="clean-select-led" />
+          </div>
+          <div className="clean-select-options">
+            {options.map((option, index) => {
+              const active = option.value === value;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className={`clean-select-option ${active ? "is-active" : ""} ${activeIndex === index ? "is-keyboard-active" : ""}`}
+                >
+                  <span className="truncate">{option.label}</span>
+                  {active ? <Check className="size-3.5 shrink-0" /> : <span className="clean-select-dot" />}
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>,
+    document.body
+  ) : null;
+
   return (
     <div ref={rootRef} className={`clean-select group ${className}`}>
       <button
@@ -88,46 +169,7 @@ export function CleanSelect({
         <span className="clean-select-value">{selected?.label ?? label}</span>
         <ChevronDown className={`clean-select-chevron ${open ? "rotate-180" : ""}`} />
       </button>
-
-      <AnimatePresence>
-        {open ? (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.985, clipPath: "inset(0 0 12% 0 round 16px)" }}
-            animate={{ opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0% 0 round 16px)" }}
-            exit={{ opacity: 0, y: 8, scale: 0.985, clipPath: "inset(0 0 18% 0 round 16px)" }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="clean-select-panel"
-            role="listbox"
-          >
-            <div className="clean-select-panel-head">
-              <span>{label}</span>
-              <span className="clean-select-led" />
-            </div>
-            <div className="clean-select-options">
-              {options.map((option, index) => {
-                const active = option.value === value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    role="option"
-                    aria-selected={active}
-                    onMouseEnter={() => setActiveIndex(index)}
-                    onClick={() => {
-                      onChange(option.value);
-                      setOpen(false);
-                    }}
-                    className={`clean-select-option ${active ? "is-active" : ""} ${activeIndex === index ? "is-keyboard-active" : ""}`}
-                  >
-                    <span className="truncate">{option.label}</span>
-                    {active ? <Check className="size-3.5 shrink-0" /> : <span className="clean-select-dot" />}
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {panel}
     </div>
   );
 }

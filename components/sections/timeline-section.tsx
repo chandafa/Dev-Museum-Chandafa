@@ -89,11 +89,11 @@ export function TimelineSection({ projects }: { projects: MuseumProject[] }) {
                   {activeProject?.name || "No repository signal"}
                 </h3>
               </div>
-              <div className="relative z-50 w-full sm:w-[180px]">
+              <div className="relative z-50 w-full sm:w-[220px]">
                 <CleanSelect
                   value={period}
                   onChange={(value) => { setPeriod(value); setExpanded(false); setActiveIndex(0); }}
-                  label="Film year"
+                  label="Timeline projector"
                   icon={<CalendarDays className="size-3" />}
                   options={years.map((year) => ({ value: year, label: year === latestPeriod ? "Latest pulse" : year }))}
                 />

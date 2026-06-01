@@ -1,10 +1,15 @@
 "use client";
 
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "motion/react";
 import { Cpu, GitBranch, Layers3, RadioTower } from "lucide-react";
 import type { ArchivePayload } from "@/types/project";
-import { ThreeArchiveCore } from "@/components/canvas/three-archive-core";
+
+const ThreeArchiveCore = dynamic(() => import("@/components/canvas/three-archive-core").then((module) => module.ThreeArchiveCore), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(var(--museum-acid),0.09),transparent_34%)]" />
+});
 
 export function ArchiveEngineSection({ archive, topLanguages }: { archive: ArchivePayload; topLanguages: [string, number][] }) {
   const featured = archive.projects.slice(0, 16);
@@ -21,10 +26,10 @@ export function ArchiveEngineSection({ archive, topLanguages }: { archive: Archi
         >
           <p className="mb-2.5 text-[0.62rem] uppercase tracking-[0.28em] text-museum-acid">Engine / 001</p>
           <h2 className="text-balance text-2xl font-semibold leading-[0.94] tracking-[-0.075em] text-museum-paper sm:text-3xl md:text-4xl">
-            The Archive Engine becomes a data core.
+            The Archive Engine becomes a rotating triangular prism.
           </h2>
           <p className="mt-4 max-w-[28rem] text-xs leading-6 text-museum-muted md:text-sm">
-            Repositories are decoded as signals, grouped as artifacts, then compressed into a 3D data core. No orbit layout, just a clean archive machine that stays readable as the repository count grows.
+            Repositories are decoded into a clean rotating triangular prism: thick wireframe edges, inner structural lines, glowing vertices, and compact data chips around the form.
           </p>
           <div className="mt-5 grid grid-cols-2 gap-2.5">
             <EngineMetric icon={<RadioTower className="size-4" />} label="Signals" value={archive.stats.total} />
@@ -46,7 +51,7 @@ export function ArchiveEngineSection({ archive, topLanguages }: { archive: Archi
           <ThreeArchiveCore projects={featured} />
 
           <div className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-museum-line/10 bg-museum-ink/50 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.18em] text-museum-muted backdrop-blur-xl">
-            Three.js data core
+            Three.js prism core
           </div>
           <div className="pointer-events-none absolute right-4 top-4 z-10 rounded-full border border-museum-line/10 bg-museum-ink/50 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.18em] text-museum-acid backdrop-blur-xl">
             {featured.length} signals

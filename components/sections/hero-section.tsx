@@ -1,29 +1,34 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "motion/react";
 import { ArrowUpRight, Github, Sparkles } from "lucide-react";
 import type { ArchivePayload } from "@/types/project";
-import { ThreeMuseumOrb } from "@/components/canvas/three-museum-orb";
 import { StatPill } from "@/components/ui/stat-pill";
+
+const ThreeMuseumOrb = dynamic(() => import("@/components/canvas/three-museum-orb").then((module) => module.ThreeMuseumOrb), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(var(--museum-paper),0.08),transparent_34%)]" />
+});
 
 export function HeroSection({ archive, topLanguages }: { archive: ArchivePayload; topLanguages: [string, number][] }) {
   return (
-    <section id="top" data-room="Entrance" className="museum-room relative min-h-0 overflow-hidden px-4 pb-8 pt-[6.75rem] sm:px-6 sm:pb-10 sm:pt-[7.5rem] md:min-h-[88vh] md:px-10 md:pt-28 lg:px-0 lg:pt-[7.9rem]">
+    <section id="top" data-room="Entrance" className="museum-room relative min-h-0 overflow-hidden px-4 pb-7 pt-[6.25rem] sm:px-6 sm:pb-10 sm:pt-[7.35rem] md:min-h-[86vh] md:px-10 md:pt-28 lg:px-0 lg:pt-[7.9rem]">
       <div className="museum-grid absolute inset-0 opacity-20" />
 
-      <div className="relative z-10 mx-auto grid max-w-[1040px] gap-5 sm:gap-6 lg:grid-cols-[0.92fr_0.78fr] lg:items-center">
+      <div className="relative z-10 mx-auto grid max-w-[1040px] gap-4 sm:gap-6 lg:grid-cols-[0.92fr_0.78fr] lg:items-center">
         <div className="text-center sm:text-left pt-0 md:pt-2 lg:pt-0">
           <motion.div
             initial={{ y: 35, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-museum-line/10 bg-museum-paper/[0.04] px-3 py-1.5 text-[0.54rem] uppercase tracking-[0.2em] text-museum-muted backdrop-blur-xl sm:mb-5 sm:gap-2.5 sm:px-3.5 sm:text-[0.62rem] sm:tracking-[0.24em]"
+            className="mb-3 inline-flex items-center gap-2 rounded-full border border-museum-line/10 bg-museum-paper/[0.04] px-2.5 py-1.5 text-[0.5rem] uppercase tracking-[0.18em] text-museum-muted backdrop-blur-xl sm:mb-5 sm:gap-2.5 sm:px-3.5 sm:text-[0.62rem] sm:tracking-[0.24em]"
           >
             <Sparkles className="size-4 text-museum-acid" />
             GitHub-powered archive
           </motion.div>
 
-          <h1 className="mx-auto max-w-2xl text-[clamp(2.55rem,16.5vw,6.55rem)] font-semibold leading-[0.86] tracking-[-0.1em] text-museum-paper sm:mx-0">
+          <h1 className="mx-auto max-w-2xl text-[clamp(2.35rem,15.5vw,6.35rem)] font-semibold leading-[0.86] tracking-[-0.1em] text-museum-paper sm:mx-0">
             <motion.span className="block" initial={{ y: 120, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>Dev</motion.span>
             <motion.span
               className="relative block h-[0.98em] w-full max-w-[6.35em] overflow-visible"
@@ -50,7 +55,7 @@ export function HeroSection({ archive, topLanguages }: { archive: ArchivePayload
             initial={{ y: 25, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.22, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-5 max-w-[30rem] text-xs leading-relaxed text-museum-muted sm:mx-0 sm:text-sm md:mt-6 md:text-base"
+            className="mx-auto mt-4 max-w-[28rem] text-[0.78rem] leading-relaxed text-museum-muted sm:mx-0 sm:text-sm md:mt-6 md:text-base"
           >
             A cinematic archive that turns repositories into a living museum: projects, stacks, activity, and legacy without manual portfolio maintenance.
           </motion.p>
@@ -59,7 +64,7 @@ export function HeroSection({ archive, topLanguages }: { archive: ArchivePayload
             initial={{ y: 25, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.32, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-7 sm:justify-start sm:gap-2.5"
+            className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:mt-7 sm:justify-start sm:gap-2.5"
           >
             <a href="#archive" className="mechanical-button group inline-flex items-center gap-2 rounded-full bg-museum-paper px-3.5 py-2.5 text-[0.58rem] font-semibold uppercase tracking-[0.15em] text-museum-ink transition-transform hover:-translate-y-1 sm:gap-2.5 sm:px-4 sm:py-3 sm:text-[0.68rem] sm:tracking-[0.18em]">
               Enter archive
@@ -76,13 +81,13 @@ export function HeroSection({ archive, topLanguages }: { archive: ArchivePayload
           initial={{ scale: 0.95, opacity: 0, y: 40 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative min-h-[238px] overflow-hidden rounded-[1.25rem] border border-museum-line/10 bg-museum-paper/[0.04] p-3 shadow-glass backdrop-blur-2xl sm:min-h-[285px] sm:rounded-[1.45rem] sm:p-3.5 md:min-h-[330px] md:rounded-[1.65rem] md:p-4"
+          className="relative mx-auto min-h-[205px] w-full max-w-[25rem] overflow-hidden rounded-[1.1rem] border border-museum-line/10 bg-museum-paper/[0.04] p-2.5 shadow-glass backdrop-blur-2xl sm:min-h-[270px] sm:rounded-[1.45rem] sm:p-3.5 md:min-h-[330px] md:max-w-none md:rounded-[1.65rem] md:p-4"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(var(--museum-acid),0.2),transparent_38%),radial-gradient(circle_at_82%_78%,rgba(var(--museum-cyan),0.16),transparent_34%)]" />
           <ThreeMuseumOrb />
 
-          <div className="relative z-10 flex h-full min-h-[210px] flex-col justify-between sm:min-h-[255px] md:min-h-[298px]">
-            <div className="flex items-center justify-between text-[0.62rem] uppercase tracking-[0.22em] text-museum-muted">
+          <div className="relative z-10 flex h-full min-h-[185px] flex-col justify-between sm:min-h-[240px] md:min-h-[298px]">
+            <div className="flex items-center justify-between text-[0.5rem] uppercase tracking-[0.18em] text-museum-muted sm:text-[0.62rem] sm:tracking-[0.22em]">
               <span>Live vault</span>
               <span>{archive.source === "github" ? "GitHub sync" : "Fallback data"}</span>
             </div>
@@ -97,15 +102,15 @@ export function HeroSection({ archive, topLanguages }: { archive: ArchivePayload
         </motion.div>
       </div>
 
-      <div className="relative z-10 mx-auto mt-4 flex max-w-[1040px] flex-wrap gap-1.5 text-[0.5rem] uppercase tracking-[0.14em] text-museum-muted sm:mt-5 sm:text-[0.58rem] sm:tracking-[0.18em]">
+      <div className="relative z-10 mx-auto mt-4 flex max-w-[1040px] gap-1.5 overflow-x-auto pb-1 text-[0.48rem] uppercase tracking-[0.12em] text-museum-muted sm:mt-5 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:text-[0.58rem] sm:tracking-[0.18em]">
         {topLanguages.map(([language, total]) => (
-          <span key={language} className="rounded-full border border-museum-line/10 px-2.5 py-1 sm:px-3 sm:py-1.5">
+          <span key={language} className="shrink-0 rounded-full border border-museum-line/10 px-2.5 py-1 sm:px-3 sm:py-1.5">
             {language} / {total}
           </span>
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto mt-5 max-w-[1040px] overflow-hidden rounded-full border border-museum-line/10 bg-museum-paper/[0.035] py-1.5 backdrop-blur-xl sm:mt-6 sm:py-2">
+      <div className="relative z-10 mx-auto mt-4 max-w-[1040px] overflow-hidden rounded-full border border-museum-line/10 bg-museum-paper/[0.035] py-1.5 backdrop-blur-xl sm:mt-6 sm:py-2">
         <div className="hero-marquee flex w-max items-center gap-6 whitespace-nowrap text-[0.48rem] uppercase tracking-[0.18em] text-museum-muted sm:gap-8 sm:text-[0.56rem] sm:tracking-[0.22em]">
           {[0, 1].map((loop) => (
             <div key={loop} className="flex items-center gap-6 px-3 sm:gap-8 sm:px-4">
