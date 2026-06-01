@@ -11,6 +11,7 @@ import { TimelineSection } from "@/components/sections/timeline-section";
 import { SystemSection } from "@/components/sections/system-section";
 import { SignalTheaterSection } from "@/components/sections/signal-theater-section";
 import { ExitGiftSection } from "@/components/sections/exit-gift-section";
+import { QuantumIndexSection } from "@/components/sections/quantum-index-section";
 import { Footer } from "@/components/sections/footer";
 import { CursorLight } from "@/components/ui/cursor-light";
 import { InteractionGuard } from "@/components/ui/interaction-guard";
@@ -78,6 +79,7 @@ export function HomeExperience({ archive }: { archive: ArchivePayload }) {
       <TimelineSection projects={archive.projects} />
       <SystemSection archive={archive} topLanguages={topLanguages} />
       <SignalTheaterSection archive={archive} />
+      <QuantumIndexSection archive={archive} />
       <ExitGiftSection archive={archive} />
       <Footer owner={archive.owner} generatedAt={archive.generatedAt} />
     </main>

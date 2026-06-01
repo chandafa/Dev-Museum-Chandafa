@@ -1197,3 +1197,119 @@ html[data-theme="light"] .artifact-label {
   75% { opacity: .16; transform: scaleY(.22); }
 }
 
+
+
+.shutdown-grid-modern {
+  background-image:
+    linear-gradient(rgba(var(--museum-line), 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--museum-line), 0.07) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(var(--museum-acid), 0.12), transparent 38%);
+  background-size: 52px 52px, 52px 52px, 100% 100%;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 74%);
+}
+
+.shutdown-aperture {
+  box-shadow:
+    0 0 90px rgba(var(--museum-acid), 0.08),
+    inset 0 0 90px rgba(var(--museum-cyan), 0.04);
+}
+
+.shutdown-aperture::before,
+.shutdown-aperture::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  border-radius: inherit;
+  border: 1px solid rgba(var(--museum-line), 0.08);
+}
+
+.shutdown-aperture::after {
+  inset: 24%;
+  border-color: rgba(var(--museum-acid), 0.16);
+}
+
+.shutdown-scan-modern {
+  filter: drop-shadow(0 0 34px rgba(var(--museum-acid), 0.55));
+}
+
+.shutdown-phase-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.shutdown-phase-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(var(--museum-acid), 0.08), transparent);
+  transform: translateX(-120%);
+  animation: shutdown-phase-sweep 4s ease-in-out infinite;
+}
+
+@keyframes shutdown-phase-sweep {
+  0%, 55% { transform: translateX(-120%); opacity: 0; }
+  70% { opacity: 1; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+.quantum-index-panel {
+  isolation: isolate;
+}
+
+.quantum-rings {
+  background:
+    radial-gradient(circle, transparent 0 27%, rgba(var(--museum-acid), 0.18) 27.3% 27.8%, transparent 28% 45%, rgba(var(--museum-cyan), 0.12) 45.3% 45.8%, transparent 46% 63%, rgba(var(--museum-line), 0.1) 63.3% 63.8%, transparent 64%),
+    conic-gradient(from 120deg, transparent, rgba(var(--museum-acid), 0.2), transparent, rgba(var(--museum-cyan), 0.16), transparent);
+  filter: blur(0.2px);
+  animation: quantum-rings-spin 18s linear infinite;
+}
+
+.quantum-rings::before,
+.quantum-rings::after {
+  content: "";
+  position: absolute;
+  inset: 21%;
+  border-radius: inherit;
+  border: 1px dashed rgba(var(--museum-line), 0.14);
+}
+
+.quantum-rings::after {
+  inset: 38%;
+  border-color: rgba(var(--museum-acid), 0.2);
+  animation: quantum-rings-spin 9s linear reverse infinite;
+}
+
+.quantum-node-card {
+  min-height: 11.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.quantum-node-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--museum-acid), 0.45), transparent);
+  transform: translateX(-100%);
+  animation: quantum-node-line 3.6s ease-in-out infinite;
+}
+
+@keyframes quantum-rings-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes quantum-node-line {
+  0%, 35% { transform: translateX(-100%); opacity: 0; }
+  55% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shutdown-phase-card::before,
+  .quantum-rings,
+  .quantum-rings::after,
+  .quantum-node-card::after {
+    animation: none !important;
+  }
+}
